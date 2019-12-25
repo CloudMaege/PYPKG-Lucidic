@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- New visual identity by [@rnason](https://github.com/rnason).
+- Dictionary Search, loose or exact search for keyword through entire dict including dict and list values by [@rnason](https://github.com/rnason).
+- Docstrings for all internal and public class methods by [@rnason](https://github.com/rnason).
 
 ### Changed
 
