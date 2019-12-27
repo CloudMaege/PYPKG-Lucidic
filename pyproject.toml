@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "Lucidic"
-version = "1.0.0-alpha.0"
+version = "0.1.1"
 description = "Lucidic is a Python dictionary utility designed to simplify dictionary operations and comparisons"
 license = "GPL-3.0-or-later"
 authors = ["Rich Nason <rnason@cloudmage.io>"]

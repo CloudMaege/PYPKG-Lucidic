@@ -115,7 +115,7 @@ SimpleListObj = ["Name", "TestList"]
 ################################
 def test_version():
     '''Test Lucidic Version'''
-    assert __version__ == '1.0.0-alpha.0'
+    assert __version__ == '0.1.1'
 
 
 def test_init():
