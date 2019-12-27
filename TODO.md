@@ -13,4 +13,9 @@
   - From List
   - From delimited string
 
+- To JSON
+- From JSON
+
+- ObjectView?
+
 - Publish to PyPi [DONE]
