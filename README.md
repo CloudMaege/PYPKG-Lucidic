@@ -68,8 +68,8 @@ The search method allows the ability to recursively search for a keyword through
 
 <br>
 
-- keyword (Required): The string value that will be searched for recursively within the lucidic instance.
-- strict (Optional): Flag to toggle between default loose search and exact search
+- `keyword` (Required): The string value that will be searched for recursively within the lucidic instance.
+- `strict` (Optional): Flag to toggle between default loose search and exact search
 
 <br>
 
