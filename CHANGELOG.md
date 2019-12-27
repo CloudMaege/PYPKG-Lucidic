@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.0] - 2019-12-23
+## ['0.1.0'] - 2019-12-23
 
 ### Added
 
@@ -15,5 +15,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Docstrings for all internal and public class methods by [@rnason](https://github.com/rnason).
 
 ### Changed
+
+### Removed
+
+<!-- markdownlint-disable MD024 -->
+## [1.0.0-alpha.0] - 2019-12-27
+
+### Added
+
+- Functional Unit tests for all methods
+- Readme updated to document currently available methods
+
+### Changed
+
+- Logic refactored to ensure recursive search through list objects
+- Main search divided into smaller methods to match, recursively search nested dicts objects, and recursively search nested lists.
 
 ### Removed

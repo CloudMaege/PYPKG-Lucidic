@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "Lucidic"
-version = "0.1.0"
+version = "1.0.0-alpha.0"
 description = "Lucidic is a Python dictionary utility designed to simplify dictionary operations and comparisons"
 license = "GPL-3.0-or-later"
 authors = ["Rich Nason <rnason@cloudmage.io>"]
@@ -8,7 +8,6 @@ readme = "README.md"
 include = [
     "CHANGELOG.md"
 ]
-repository = "Lucidic"
 homepage = "https://github.com/TheCloudMage/PyPkgs-Lucidic"
 
 [tool.poetry.dependencies]

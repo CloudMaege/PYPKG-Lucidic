@@ -1,8 +1,8 @@
 # Lucidic Todo List
 
-- Create Tests for current search and internal class methods
+- Create Tests for current search and internal class methods [DONE]
 
-- Document README
+- Document README [DONE]
 
 - Compare operations:
   - Find added keys
@@ -13,4 +13,4 @@
   - From List
   - From delimited string
 
-- Publish to PyPi
+- Publish to PyPi [DONE]

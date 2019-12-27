@@ -39,6 +39,21 @@ TESTDICT2 = {
                     { "Name": "12345"},
                     { "Name": "54321"},
                     { "Name": "34512"}
+                ],
+                "TestList": [
+                    "Test",
+                    "Name",
+                    "In",
+                    [
+                        "Sub",
+                        "Test",
+                        [
+                            "Sub",
+                            "Test",
+                            "Unique",
+                            "Name"
+                        ]
+                    ]
                 ]
             }
         }
@@ -72,6 +87,16 @@ TESTDICT3 = {
                     { "Name": "12345"},
                     { "Name": "54321"},
                     { "Name": "34512"}
+                ],
+                "TestList": [
+                    "Test",
+                    "Name",
+                    "In",
+                    [
+                        "Sub",
+                        "Test",
+                        "Name"
+                    ]
                 ]
             }
         }
@@ -109,3 +134,18 @@ print("Results Returned: {}".format(len(results3)))
 for result in results3:
     print(result)
 print("\n")
+
+TestDict = {
+    "Records": [
+        {"Name": "Record1", "Keywords": ["one", "two", "three"]},
+        {"Name": "Record2", "Keywords": ["three", "four", "five"]},
+        {"Name": "Record3", "Keywords": [
+            {"ListItem": "One"},
+            {"ListItem": "Two"},
+            {"ListItem": "Three"},
+            {"ListItem": [["One"], ["One", "Two"], ["One", "Two", "Three"]]}
+        ]}
+    ]
+}
+TestDict = Lucidic(TestDict)
+print(TestDict.search("Three"))
