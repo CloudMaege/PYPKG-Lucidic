@@ -6,132 +6,152 @@ import pytest
 # Test Dicts:  #
 ################
 # Construct a simple test dict object
-SimpleTestDict = {"Name": "Test Dictionary"}
+def getTestDict(select):
+    '''Simple Function to return one of the test dicts below so that each test function gets a clean dict as an object instantiation target.'''
 
-# Construct a simple nested test dict object
-SimpleNestedTestDict = {"Record": {"Name": "Test Dictionary", "Type": "SomeRecordTypeName"}}
+    # Define a simple test dictionary
+    SimpleTestDict = {"Name": "Test Dictionary"}
 
-# Construct a test dict with None, Null, Nil and empty string values
-NullTestDict = {
-    "FirstTierKey1": "FirstTierValue",
-    "FirstTierKey2": "Null",
-    "FirstTierKey3": {
-        "SecondTierKey1": "SomeValue",
-        "SecondTierKey2": "Nil",
-        "SecondTierKey3": "",
-        "SecondTierKey4": {
-            "ThirdTierKey1": "null",
-            "ThirdTierKey2": [
-                {"FourthListTierKey1": "nil"},
-                {"FourthListTierKey2": ""},
-                {"FourthListTierKey3": "FourthListTierValue3"}
-            ]
+    # Construct a simple nested test dict object
+    SimpleNestedTestDict = {"Record": {"Name": "Test Dictionary", "Type": "SomeRecordTypeName"}}
+
+    # Construct a test dict with None, Null, Nil and empty string values
+    NullTestDict = {
+        "FirstTierKey1": "FirstTierValue",
+        "FirstTierKey2": "Null",
+        "FirstTierKey3": {
+            "SecondTierKey1": "SomeValue",
+            "SecondTierKey2": "Nil",
+            "SecondTierKey3": "",
+            "SecondTierKey4": {
+                "ThirdTierKey1": "null",
+                "ThirdTierKey2": [
+                    {"FourthListTierKey1": "nil"},
+                    {"FourthListTierKey2": ""},
+                    {"FourthListTierKey3": "FourthListTierValue3"}
+                ]
+            }
         }
     }
-}
 
-# Construct a nested test dict object
-NestedDict = {
-    "Name": "TestDictionary2",
-    "Customers": {
-        "Name": "John Doe",
-        "Address": {
-            "Name": "Home",
-            "AliasName": "Home",
-            "House": "76",
-            "Street": "Totter's Lane",
-            "City": "Shoreitch",
-            "State": "CA",
-            "ZipCode": "12345"
-        }
-    },
-    "Business": [
-        {
-            "Name": "SomeBusiness",
+    # Construct a nested test dict object
+    NestedTestDict = {
+        "Name": "TestDictionary2",
+        "Customers": {
+            "Name": "John Doe",
             "Address": {
-                "Name": "Primary",
-                "Building": "100",
+                "Name": "Home",
+                "AliasName": "Home",
+                "House": "76",
                 "Street": "Totter's Lane",
                 "City": "Shoreitch",
                 "State": "CA",
-                "ZipCode": 12345,
-                "Passcode": [
-                    { "Name": "12345"},
-                    { "Name": "54321"},
-                    { "Name": "34512"}
-                ],
-                "TestList": [
-                    "Test",
-                    "Name",
-                    "In",
-                    [
-                        "Sub",
+                "ZipCode": "12345"
+            }
+        },
+        "Business": [
+            {
+                "Name": "SomeBusiness",
+                "Address": {
+                    "Name": "Primary",
+                    "Building": "100",
+                    "Street": "Totter's Lane",
+                    "City": "Shoreitch",
+                    "State": "CA",
+                    "ZipCode": 12345,
+                    "Passcode": [
+                        { "Name": "12345"},
+                        { "Name": "54321"},
+                        { "Name": "34512"}
+                    ],
+                    "TestList": [
                         "Test",
+                        "Name",
+                        "In",
                         [
                             "Sub",
                             "Test",
-                            "Unique",
-                            "Name"
+                            [
+                                "Sub",
+                                "Test",
+                                "Unique",
+                                "Name"
+                            ]
                         ]
                     ]
-                ]
+                }
             }
-        }
-    ]
-}
+        ]
+    }
 
-# Construct a nested test dict object for comparison against the first nested dict object.
-NestedCompareDict = {
-    "Name": "TestDictionary3",
-    "Customers": {
-        "Name": "John Doe Jr.",
-        "Address": {
-            "Name": "Home",
-            "House": 76,
-            "Street": "Totter's Lane",
-            "City": "Shoreitch",
-            "State": "NY",
-            "ZipCode": 12345
-        }
-    },
-    "Business": [
-        {
-            "Name": "SomeBusiness",
+    # Construct a nested test dict object for comparison against the first nested dict object.
+    NestedCompareTestDict = {
+        "Name": "TestDictionary3",
+        "Customers": {
+            "Name": "John Doe Jr.",
             "Address": {
-                "Name": "Primary",
-                "Alias": "PrimaryName",
-                "Building": "100",
+                "Name": "Home",
+                "House": 76,
                 "Street": "Totter's Lane",
                 "City": "Shoreitch",
-                "State": "CA",
-                "ZipCode": 54321,
-                "Passcode": [
-                    { "Name": "12345"},
-                    { "Name": "54321"},
-                    { "Name": "34512"}
-                ],
-                "TestList": [
-                    "Test",
-                    "Name",
-                    "In",
-                    [
-                        "Sub",
+                "State": "NY",
+                "ZipCode": 12345
+            }
+        },
+        "Business": [
+            {
+                "Name": "SomeBusiness",
+                "Address": {
+                    "Name": "Primary",
+                    "Alias": "PrimaryName",
+                    "Building": "100",
+                    "Street": "Totter's Lane",
+                    "City": "Shoreitch",
+                    "State": "CA",
+                    "ZipCode": 54321,
+                    "Passcode": [
+                        { "Name": "12345"},
+                        { "Name": "54321"},
+                        { "Name": "34512"}
+                    ],
+                    "TestList": [
                         "Test",
+                        "Name",
+                        "In",
                         [
                             "Sub",
                             "Test",
-                            "Unique",
-                            "Name"
+                            [
+                                "Sub",
+                                "Test",
+                                "Unique",
+                                "Name"
+                            ]
                         ]
                     ]
-                ]
+                }
             }
-        }
-    ]
-}
+        ]
+    }
 
-# Construct a simple list test object
-SimpleList = ["Name", "TestList"]
+    # Construct a simple list test object
+    SimpleTestList = ["Name", "TestList"]
+
+    # Based on the selection, return the requested object
+    if select == "simple_dict":
+        return SimpleTestDict
+    elif select == "simple_nested_dict":
+        return SimpleNestedTestDict
+    elif select == "nested_dict":
+        return NestedTestDict
+    elif select == "nested_compare_dict":
+        return NestedCompareTesetDict
+    elif select == "null_dict":
+        return NullTestDict
+    elif select == "simple_list":
+        return SimpleTestList
+    else:
+        return {}
 
 
 ################################
@@ -146,19 +166,17 @@ def test_init():
     '''Test Lucidic class constructor'''
     
     # Create a copy of the SimpleTestDict (This will allow us to test no modifications to the instantiation source dict.)
-    TestDict = SimpleTestDict.copy()
-    
-    # Set the Lucidic Test Dict Object
+    TestDict = getTestDict("simple_dict")
+    TestList = getTestDict("simple_list")
     Lucidict = Lucidic(TestDict)
     
     '''Test class constructor:'''
     # Test instantiated class instance with dict specified
-    assert(Lucidict.dict == SimpleTestDict)
+    assert(Lucidict.dict == TestDict)
 
     # Test to ensure original source dict is not modified
     Lucidict.dict.clear()
-    assert(TestDict == SimpleTestDict)
-    assert(Lucidict.dict != SimpleTestDict)
+    assert(TestDict == getTestDict("simple_dict"))
     assert(Lucidict.dict != TestDict)
     assert(Lucidict.dict == {})
     
@@ -167,10 +185,12 @@ def test_init():
     assert(EmptyLucidict.dict == {})
 
     # Test instantiated class instance with non dict object
-    with pytest.raises(AssertionError): LucidictFail = Lucidic(SimpleList)
+    with pytest.raises(AssertionError): LucidictFail = Lucidic(TestList)
 
     '''Clean Up'''
+    Lucidict._reset_instance()
     del TestDict
+    del TestList
     del Lucidict
     del EmptyLucidict
 
@@ -178,8 +198,9 @@ def test_init():
 def test_results():
     '''Test the internal class _get_results, _set_results, _clear_results methods'''
 
-    # Instantiate Lucidic Object
-    Lucidict = Lucidic(SimpleTestDict)
+   # Set the Lucidic Test Dict Object
+    TestDict = getTestDict("simple_dict")
+    Lucidict = Lucidic(TestDict)
 
     '''Test Lucidic._set_result, Lucidic._get_result and Lucidic._clear_result method actions'''
     get_results = Lucidict._get_results()
@@ -201,6 +222,8 @@ def test_results():
     assert(get_results == [])
 
     '''Clean Up'''
+    Lucidict._reset_instance()
+    del TestDict
     del Lucidict
     del get_results
     del set_results
@@ -209,12 +232,13 @@ def test_results():
 def test_keyword():
     '''Test the internal class _get_keyword, _set_keyword, _clear_keyword methods'''
 
-    # Instantiate Lucidic Object
-    Lucidict = Lucidic(SimpleTestDict)
+    # Set the Lucidic Test Dict Object
+    TestDict = getTestDict("simple_dict")
+    Lucidict = Lucidic(TestDict)
 
     '''Test expected method assertion exceptions:'''
     # keyword = str
-    with pytest.raises(AssertionError): Lucidict._set_keyword(SimpleTestDict)
+    with pytest.raises(AssertionError): Lucidict._set_keyword(TestDict)
     
     '''Test Lucidic._set_keyword, Lucidic._get_keyword and Lucidic._clear_keyword method actions'''
     get_keyword = Lucidict._get_keyword()
@@ -233,6 +257,8 @@ def test_keyword():
     assert(get_keyword == "")
 
     '''Clean Up'''
+    Lucidict._reset_instance()
+    del TestDict
     del Lucidict
     del get_keyword
     del set_keyword
@@ -241,8 +267,9 @@ def test_keyword():
 def test_strict():
     '''Test the internal class get_strict, _set_strict, _unset_strict methods'''
 
-    # Instantiate Lucidic Object
-    Lucidict = Lucidic(SimpleTestDict)
+    # Set the Lucidic Test Dict Object
+    TestDict = getTestDict("simple_dict")
+    Lucidict = Lucidic(TestDict)
     
     '''Test Lucidic._get_strict, Lucidic._set_strict and Lucidic._unset_strict method actions'''
     get_strict = Lucidict._get_strict()
@@ -259,6 +286,8 @@ def test_strict():
     assert(get_strict == False)
 
     '''Clean Up'''
+    Lucidict._reset_instance()
+    del TestDict
     del Lucidict
     del get_strict
 
@@ -267,7 +296,8 @@ def test_rest_instance():
     '''Test the Lucidic Reset Instance Environment Method'''
 
     # Set the Lucidic Test Dict Object
-    Lucidict = Lucidic(SimpleTestDict)
+    TestDict = getTestDict("simple_dict")
+    Lucidict = Lucidic(TestDict)
 
     # Set and Validate values for results, keyword, and strict
     Lucidict._set_strict()
@@ -304,20 +334,29 @@ def test_rest_instance():
     assert(len(get_results) == 0)
     assert(get_results == [])
 
-    '''No Clean Up Required'''
+    '''Clean Up'''
+    Lucidict._reset_instance()
+    del TestDict
+    del Lucidict
+    del get_strict
+    del get_keyword
+    del set_results
+    del get_results
 
 
 def test_set_search_result():
     '''Test the Lucidic Update Results Internal Method'''
 
     # Set the Lucidic Test Dict Object
-    Lucidict = Lucidic(SimpleTestDict)
+    TestDict = getTestDict("simple_dict")
+    TestList = getTestDict("simple_list")
+    Lucidict = Lucidic(TestDict)
 
     '''Test expected method assertion exceptions:'''
     # keypath = list
-    with pytest.raises(AssertionError): Lucidict._set_search_result("SimpleList", SimpleTestDict)
+    with pytest.raises(AssertionError): Lucidict._set_search_result("TestList", TestDict)
     # match = dict
-    with pytest.raises(AssertionError): Lucidict._set_search_result(SimpleList, "SimpleTestDict")
+    with pytest.raises(AssertionError): Lucidict._set_search_result(TestList, "TestDict")
 
     '''Test Lucidic._set_search_result method actions'''
     # Ensure the result list object is empty
@@ -347,6 +386,8 @@ def test_set_search_result():
     '''Clean Up'''
     # Clear the search results, in case we run it later
     Lucidict._reset_instance()
+    del TestDict
+    del TestList
     del get_results
     del Lucidict
     
@@ -355,19 +396,21 @@ def test_construct_list_keypath():
     '''Test the Lucidic method that constructs a keypath string that can be appended to the result list from a list item and it's index.'''
 
     # Set the Lucidic Test Dict Object
-    Lucidict = Lucidic(SimpleTestDict)
+    TestDict = getTestDict("simple_dict")
+    TestList = getTestDict("simple_list")
+    Lucidict = Lucidic(TestDict)
     
     '''Test expected method assertion exceptions:'''
     # keypath = list
-    with pytest.raises(AssertionError): Lucidict._construct_list_keypath("SimpleList", "Key", 0)
+    with pytest.raises(AssertionError): Lucidict._construct_list_keypath("TestList", "Key", 0)
     # k = str
-    with pytest.raises(AssertionError): Lucidict._construct_list_keypath(SimpleList, ["Key"], 0)
+    with pytest.raises(AssertionError): Lucidict._construct_list_keypath(TestList, ["Key"], 0)
     # list_index = int
-    with pytest.raises(AssertionError): Lucidict._construct_list_keypath(SimpleList, "Key", "0")
+    with pytest.raises(AssertionError): Lucidict._construct_list_keypath(TestList, "Key", "0")
 
     '''Test Lucidic._construct_list_keypath method actions'''
     # Test Setting results in the _search_results internal method by calling method with valid parameters.
-    list_keypath = Lucidict._construct_list_keypath(SimpleList, "Key1", 0)
+    list_keypath = Lucidict._construct_list_keypath(TestList, "Key1", 0)
     assert(isinstance(list_keypath, list))
     assert(len(list_keypath) == 3)
     assert(list_keypath[0] == "Name")
@@ -375,6 +418,9 @@ def test_construct_list_keypath():
     assert(list_keypath[2] == "Key1[0]")
 
     '''Clean Up'''
+    Lucidict._reset_instance()
+    del TestDict
+    del TestList
     del list_keypath
     del Lucidict
     
@@ -383,17 +429,19 @@ def test_search_item_match():
     '''Test the Lucidic method that attempts to match the specified keyword with the current list item, or dict key/value'''
     
     # Set the Lucidic Test Dict Object
-    Lucidict = Lucidic(SimpleNestedTestDict)
+    TestDict = getTestDict("simple_nested_dict")
+    TestList = getTestDict("simple_list")
+    Lucidict = Lucidic(TestDict)
 
     '''Test expected method assertion exceptions:'''
     # key = str
-    with pytest.raises(AssertionError): Lucidict._search_item_match(["Key1"], "Item", SimpleList)
+    with pytest.raises(AssertionError): Lucidict._search_item_match(["Key1"], "Item", TestList)
     # value = !dict
-    with pytest.raises(AssertionError): Lucidict._search_item_match("Key1", {"Name": "Item"}, SimpleList)
+    with pytest.raises(AssertionError): Lucidict._search_item_match("Key1", {"Name": "Item"}, TestList)
     # value = !list
-    with pytest.raises(AssertionError): Lucidict._search_item_match("Key1", ["Item"], SimpleList)
+    with pytest.raises(AssertionError): Lucidict._search_item_match("Key1", ["Item"], TestList)
     # keyPath = list
-    with pytest.raises(AssertionError): Lucidict._search_item_match("Key1", "Item", "SimpleListObj")
+    with pytest.raises(AssertionError): Lucidict._search_item_match("Key1", "Item", "TestList")
     
     '''Test Lucidic._search_item_match method actions'''
     '''Loose Search Test'''
@@ -453,6 +501,8 @@ def test_search_item_match():
 
     '''Clean Up'''
     Lucidict._reset_instance()
+    del TestDict
+    del TestList
     del get_results
     del get_strict
     del get_keyword
@@ -464,13 +514,15 @@ def test_search_recursive_dict():
     '''Test the Lucidic method that attempts to recursively search a python dictionary'''
     
     # Set the Lucidic Test Dict Object
-    Lucidict = Lucidic(NestedDict)
+    TestDict = getTestDict("nested_dict")
+    TestList = getTestDict("simple_list")
+    Lucidict = Lucidic(TestDict)
 
     '''Test expected method assertion exceptions:'''
     # subdict = dict
-    with pytest.raises(AssertionError): Lucidict._search_recursive_dict("NestedDict", SimpleList)
+    with pytest.raises(AssertionError): Lucidict._search_recursive_dict("TestDict", TestList)
     # keypath = list
-    with pytest.raises(AssertionError): Lucidict._search_recursive_dict(NestedDict, "SimpleList")
+    with pytest.raises(AssertionError): Lucidict._search_recursive_dict(TestDict, "TestList")
 
     '''Test Lucidic._search_recursive_dict method actions'''
     # Set the keypath and keyword variables manually, this happens as part of the public search method call
@@ -500,6 +552,8 @@ def test_search_recursive_dict():
 
     '''Clean Up'''
     Lucidict._reset_instance()
+    del TestDict
+    del TestList
     del get_results
     del get_strict
     del get_keyword
@@ -511,15 +565,17 @@ def test_search_recursive_list():
     '''Test the Lucidic method that attempts to recursively search a python list'''
     
     # Set the Lucidic Test Dict Object
-    Lucidict = Lucidic(NestedDict)
+    TestDict = getTestDict("nested_dict")
+    TestList = getTestDict("simple_list")
+    Lucidict = Lucidic(TestDict)
 
     '''Test expected method assertion exceptions:'''
     # k = str
-    with pytest.raises(AssertionError): Lucidict._search_recursive_list(["parentKey"], SimpleList, SimpleList)
+    with pytest.raises(AssertionError): Lucidict._search_recursive_list(["parentKey"], TestList, TestList)
     # sublist = list
-    with pytest.raises(AssertionError): Lucidict._search_recursive_list("parentKey", "SimpleList", SimpleList)
+    with pytest.raises(AssertionError): Lucidict._search_recursive_list("parentKey", "TestList", TestList)
     # keypath = list
-    with pytest.raises(AssertionError): Lucidict._search_recursive_list("parentKey", SimpleList, "SimpleList")
+    with pytest.raises(AssertionError): Lucidict._search_recursive_list("parentKey", TestList, "TestList")
 
     '''Test Lucidic._search_recursive_list method actions'''
     # Set the keypath and keyword variables manually, this happens as part of the public search method call
@@ -547,6 +603,8 @@ def test_search_recursive_list():
 
     '''Clean Up'''
     Lucidict._reset_instance()
+    del TestDict
+    del TestList
     del get_results
     del get_strict
     del get_keyword
@@ -558,8 +616,8 @@ def test_replace_null_dict_values():
     '''Test the Lucidic method that attempts to scan the specified dict and replace None, Null, Nil, or Empty String values with a specified default value.'''
     
     # Copy the origin dict as the find null values public method will, and then set the Lucidic Test Dict Object
-    NullDict = NullTestDict.copy()
-    Lucidict = Lucidic(NullDict)
+    TestDict = getTestDict("null_dict")
+    Lucidict = Lucidic(TestDict)
 
     '''Test Lucidic._replace_null_dict_values None, Null, Nil, EmptyString replacement method action'''
     # dictobj = dict
@@ -575,7 +633,7 @@ def test_replace_null_dict_values():
     Lucidict._replace_null_dict_values(Lucidict.dict)
     
     assert(isinstance(Lucidict.dict, dict))
-    assert(Lucidict.dict != NullTestDict)
+    assert(Lucidict.dict != TestDict)
     ValidateDict = Lucidict.dict
     assert(ValidateDict.get('FirstTierKey2') == get_keyword)
     assert(ValidateDict.get('FirstTierKey3').get('SecondTierKey2') == get_keyword)
@@ -604,7 +662,7 @@ def test_replace_null_dict_values():
     # Set a variable to use as a reference to validate that the previously replace values are still in tact.
     confirmVal = "Undefined"
     assert(isinstance(Lucidict.dict, dict))
-    assert(Lucidict.dict != NullTestDict)
+    assert(Lucidict.dict != TestDict)
     assert(Lucidict.dict.get('FirstTierKey2') == confirmVal)
     assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey2') == confirmVal)
     assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey3') == confirmVal)
@@ -631,7 +689,7 @@ def test_replace_null_dict_values():
     # Set a variable to use as a reference to validate that the previously replace values are still in tact.
     confirmVal = "Undefined"
     assert(isinstance(Lucidict.dict, dict))
-    assert(Lucidict.dict != NullTestDict)
+    assert(Lucidict.dict != TestDict)
     assert(Lucidict.dict.get('FirstTierKey2') == confirmVal)
     assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey2') == confirmVal)
     assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey3') == confirmVal)
@@ -642,6 +700,7 @@ def test_replace_null_dict_values():
 
     '''Clean Up'''
     Lucidict._reset_instance()
+    del TestDict
     del get_keyword
     del set_keyword
     del Lucidict
@@ -653,8 +712,9 @@ def test_replace_null_dict_values():
 def test_search():
     '''Test the Lucidic public method that searches through the specified dictionary class instance for a given keyword.'''
     
-    # Set the Lucidic Test Dict Object
-    Lucidict = Lucidic(NestedDict)
+    # Copy the origin dict as the find null values public method will, and then set the Lucidic Test Dict Object
+    TestDict = getTestDict("nested_dict")
+    Lucidict = Lucidic(TestDict)
 
     '''Test expected method assertion exceptions:'''
     # keyword = str
@@ -701,6 +761,7 @@ def test_search():
 
     '''Clean Up'''
     Lucidict._reset_instance()
+    del TestDict
     del SearchResults
     del Lucidict
 
@@ -708,13 +769,25 @@ def test_search():
 def test_replaceNull():
     '''Test the Lucidic public method that attempts to scan the specified dict and replace None, Null, Nil, or Empty String values with a specified default value.'''
     
-    # Set the Lucidic Test Dict Object
-    Lucidict = Lucidic(NullTestDict)
-    assert(Lucidict.dict == NullTestDict)
+    # Copy the origin dict as the find null values public method will, and then set the Lucidic Test Dict Object
+    TestDict = getTestDict("null_dict")
+    Lucidict = Lucidic(TestDict)
+    
+    assert(Lucidict.dict == TestDict)
     
     '''Test expected method assertion exceptions:'''
     # keyword = str
     with pytest.raises(AssertionError): Lucidict.replaceNull(["UnKnown"])
+
+    # Validate the values of Lucidict.dist before running the key replace method
+    assert(isinstance(Lucidict.dict, dict))
+    assert(Lucidict.dict == TestDict)
+    assert(Lucidict.dict.get('FirstTierKey2') == "Null")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey2') == "Nil")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey3') == "")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey1') == "null")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[0].get('FourthListTierKey1') == "nil")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[1].get('FourthListTierKey2') == "")
     
     # Assign SanitizedDict as the return target and call the method.
     SanitizedDict = Lucidict.replaceNull("UnKnown")
@@ -724,55 +797,153 @@ def test_replaceNull():
     assert(isinstance(get_keyword, str))
     assert(get_keyword == "UnKnown")
     
-    # Check the values of SanitizedDict
+    # Validate the values of Lucidict.dist after running the key replace method
+    assert(isinstance(Lucidict.dict, dict))
+    assert(Lucidict.dict == Lucidict.dict)
+    assert(Lucidict.dict != TestDict)
+    assert(Lucidict.dict.get('FirstTierKey2') == "UnKnown")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey2') == "UnKnown")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey3') == "UnKnown")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey1') == "UnKnown")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[0].get('FourthListTierKey1') == "UnKnown")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[1].get('FourthListTierKey2') == "UnKnown")
+
+    # Validate the values of SanitizedDict after running the key replace method (Should be exact copy of Lucidict.dist)
     assert(isinstance(SanitizedDict, dict))
     assert(SanitizedDict == Lucidict.dict)
-    assert(SanitizedDict != NullTestDict)
-    assert(SanitizedDict.get('FirstTierKey2') == "UnKnown")
-    assert(SanitizedDict.get('FirstTierKey3').get('SecondTierKey2') == "UnKnown")
-    assert(SanitizedDict.get('FirstTierKey3').get('SecondTierKey3') == "UnKnown")
-    assert(SanitizedDict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey1') == "UnKnown")
-    assert(SanitizedDict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[0].get('FourthListTierKey1') == "UnKnown")
-    assert(SanitizedDict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[1].get('FourthListTierKey2') == "UnKnown")
+    assert(SanitizedDict != TestDict)
 
-    # Test replace key instances
-    # # Set the new null replace string (this will replace any found key instances)
-    # validDict._replace_null_str = "ChangedKey1"
-    # # Set the key name to be replaced with the replace_null_str if found
-    # validDict._replace_key_instance = "FourthListTierKey3"
-    # # Run the method on the dict
-    # validDict._replace_null_dict_values(validDict.dict)
-    # # Set a variable to use as a reference to validate that the previously replace values are still in tact.
-    # confirmVal = "Undefined"
-    # assert(isinstance(validDict.dict, dict))
-    # assert(validDict.dict != NullTestDict)
-    # assert(validDict.dict.get('FirstTierKey2') == confirmVal)
-    # assert(validDict.dict.get('FirstTierKey3').get('SecondTierKey2') == confirmVal)
-    # assert(validDict.dict.get('FirstTierKey3').get('SecondTierKey3') == confirmVal)
-    # assert(validDict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey1') == confirmVal)
-    # assert(validDict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[0].get('FourthListTierKey1') == confirmVal)
-    # assert(validDict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[1].get('FourthListTierKey2') == confirmVal)
-    # assert(validDict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[2].get(validDict._replace_null_str) == "FourthListTierValue3")
+    '''Clean Up'''
+    Lucidict._reset_instance()
+    del TestDict
+    del SanitizedDict
+    del Lucidict
+    del get_keyword
+
+
+def test_replaceKey():
+    '''Test the Lucidic public method that attempts to scan the specified dict and replace any found keys matching the provided key_search to the value specified.'''
     
-    # # Test replace value instances
-    # # Set the new null replace string (this will replace any found key instances)
-    # validDict._replace_null_str = "ChangedValue1"
-    # # Set the key name to be replaced with the replace_null_str if found
-    # validDict._replace_value_instance = "FourthListTierValue3"
-    # # Run the method on the dict
-    # validDict._replace_null_dict_values(validDict.dict)
-    # # Set a variable to use as a reference to validate that the previously replace values are still in tact.
-    # confirmVal = "Undefined"
-    # assert(isinstance(validDict.dict, dict))
-    # assert(validDict.dict != NullTestDict)
-    # assert(validDict.dict.get('FirstTierKey2') == confirmVal)
-    # assert(validDict.dict.get('FirstTierKey3').get('SecondTierKey2') == confirmVal)
-    # assert(validDict.dict.get('FirstTierKey3').get('SecondTierKey3') == confirmVal)
-    # assert(validDict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey1') == confirmVal)
-    # assert(validDict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[0].get('FourthListTierKey1') == confirmVal)
-    # assert(validDict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[1].get('FourthListTierKey2') == confirmVal)
-    # assert(validDict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[2].get('ChangedKey1') == validDict._replace_null_str)
+    # Copy the origin dict as the find null values public method will, and then set the Lucidic Test Dict Object
+    TestDict = getTestDict("null_dict")
+    Lucidict = Lucidic(TestDict)
+    assert(Lucidict.dict == TestDict)
 
-# def test_replaceKey():
+    # Set the test condition vars
+    key_search = "FourthListTierKey3"
+    replace_value = "ChangedKey1"
+    
+    '''Test expected method assertion exceptions:'''
+    # key_search = str
+    with pytest.raises(AssertionError): Lucidict.replaceKey([key_search], replace_value)
+    # replace_value = str
+    with pytest.raises(AssertionError): Lucidict.replaceKey(key_search, [replace_value])
+    
+    # Validate the values of before running key replace method
+    assert(isinstance(Lucidict.dict, dict))
+    assert(Lucidict.dict == TestDict)
+    assert(Lucidict.dict.get('FirstTierKey2') == "Null")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey2') == "Nil")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey3') == "")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey1') == "null")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[0].get('FourthListTierKey1') == "nil")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[1].get('FourthListTierKey2') == "")
+    assert(key_search in Lucidict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[2].keys())
+    assert(replace_value not in Lucidict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[2].keys())
+    
+    # Assign SanitizedDict as the return target and call the method.
+    KeyReplaceDict = Lucidict.replaceKey(key_search, replace_value)
 
-# def test_replaceVal():
+    # Check Keyword Assignment
+    get_keyword = Lucidict._get_keyword()
+    assert(isinstance(get_keyword, str))
+    assert(get_keyword == replace_value)
+    
+    # Validate the values of KeyReplaceDict after running the replace method
+    assert(isinstance(Lucidict.dict, dict))
+    assert(Lucidict.dict != TestDict)
+    assert(Lucidict.dict.get('FirstTierKey2') == "Null")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey2') == "Nil")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey3') == "")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey1') == "null")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[0].get('FourthListTierKey1') == "nil")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[1].get('FourthListTierKey2') == "")
+    assert(replace_value in Lucidict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[2].keys())
+    assert(key_search not in Lucidict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[2].keys())
+
+    # Validate the values of KeyReplaceDict after running the key replace method (Should be exact copy of Lucidict.dist)
+    assert(isinstance(KeyReplaceDict, dict))
+    assert(KeyReplaceDict == Lucidict.dict)
+    assert(KeyReplaceDict != TestDict)
+
+    '''Clean Up'''
+    Lucidict._reset_instance()
+    del TestDict
+    del KeyReplaceDict
+    del Lucidict
+    del get_keyword
+    del key_search
+    del replace_value
+
+
+def test_replaceValue():
+    '''Test the Lucidic public method that attempts to scan the specified dict and replace any found key values matching the provided valname to the value specified.'''
+    
+    # Copy the origin dict as the find null values public method will, and then set the Lucidic Test Dict Object
+    TestDict = getTestDict("null_dict")
+    Lucidict = Lucidic(TestDict)
+    assert(Lucidict.dict == TestDict)
+
+    # Set the test condition vars
+    val_search = "FourthListTierValue3"
+    replace_value = "ChangedVal1"
+    
+    '''Test expected method assertion exceptions:'''
+    # val_Search = str
+    with pytest.raises(AssertionError): Lucidict.replaceKey([val_search], replace_value)
+    # value = str
+    with pytest.raises(AssertionError): Lucidict.replaceKey(val_search, [replace_value])
+    
+    # Validate the values of before running key replace method
+    assert(isinstance(Lucidict.dict, dict))
+    assert(Lucidict.dict == TestDict)
+    assert(Lucidict.dict.get('FirstTierKey2') == "Null")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey2') == "Nil")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey3') == "")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey1') == "null")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[0].get('FourthListTierKey1') == "nil")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[1].get('FourthListTierKey2') == "")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[2].get('FourthListTierKey3') == val_search)
+    
+    # Assign SanitizedDict as the return target and call the method.
+    ValReplaceDict = Lucidict.replaceValue(val_search, replace_value)
+
+    # Check Keyword Assignment
+    get_keyword = Lucidict._get_keyword()
+    assert(isinstance(get_keyword, str))
+    assert(get_keyword == replace_value)
+    
+    # Validate the values of KeyReplaceDict after running the replace method
+    assert(isinstance(Lucidict.dict, dict))
+    assert(Lucidict.dict != TestDict)
+    assert(Lucidict.dict.get('FirstTierKey2') == "Null")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey2') == "Nil")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey3') == "")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey1') == "null")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[0].get('FourthListTierKey1') == "nil")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[1].get('FourthListTierKey2') == "")
+    assert(Lucidict.dict.get('FirstTierKey3').get('SecondTierKey4').get('ThirdTierKey2')[2].get('FourthListTierKey3') == replace_value)
+
+    # Validate the values of ValReplaceDict after running the key replace method (Should be exact copy of Lucidict.dist)
+    assert(isinstance(ValReplaceDict, dict))
+    assert(ValReplaceDict == Lucidict.dict)
+    assert(ValReplaceDict != TestDict)
+
+    '''Clean Up'''
+    Lucidict._reset_instance()
+    del TestDict
+    del ValReplaceDict
+    del Lucidict
+    del get_keyword
+    del val_search
+    del replace_value

@@ -13,6 +13,7 @@
 ###############
 import json
 import inspect
+import copy
 import logging
 
 Logger = logging.getLogger('cloudmage.lucidic')
@@ -73,7 +74,8 @@ class Lucidic(object):
         
         if dictionary is not None:
             assert isinstance(dictionary, dict), "{}({}) attribute expected type: {}, however the current value: {} is of type: {}".format(ThisMethod, "dictionary", "dict", dictionary, type(dictionary))
-            self.dict = dictionary.copy()
+            # Use copy.deepcopy to make a true dict copy, dict.copy() will still allow mutable changes to occur in origin.
+            self.dict = copy.deepcopy(dictionary)
             Logger.debug('{} specified during the construction of this class instance.'.format(dictionary))
         else:
             self.dict = {}
@@ -164,6 +166,9 @@ class Lucidic(object):
         TypeError : 
             Raised if passed variables are not of the properly specified types.
 
+        GeneralError :
+            Raised when method encounters a processing error, that is not otherwise caught.
+
         Returns :
         ------------
         None : 
@@ -218,6 +223,9 @@ class Lucidic(object):
         ------------
         TypeError : 
             Raised if passed variables are not of the properly specified types.
+        
+        GeneralError :
+            Raised when method encounters a processing error, that is not otherwise caught.
 
         Returns :
         ------------
@@ -274,6 +282,9 @@ class Lucidic(object):
         ------------
         TypeError : 
             Raised if passed variables are not of the properly specified types.
+
+        GeneralError :
+            Raised when method encounters a processing error, that is not otherwise caught.
 
         Returns :
         ------------
@@ -338,6 +349,9 @@ class Lucidic(object):
         TypeError : 
             Raised if passed variables are not of the properly specified types.
 
+        GeneralError :
+            Raised when method encounters a processing error, that is not otherwise caught.
+
         Returns :
         ------------
         None :
@@ -395,6 +409,9 @@ class Lucidic(object):
         ------------
         TypeError : 
             Raised if passed variables are not of the properly specified types.
+        
+        GeneralError :
+            Raised when method encounters a processing error, that is not otherwise caught.
 
         Returns :
         ------------
@@ -461,6 +478,9 @@ class Lucidic(object):
         TypeError : 
             Raised if passed variables are not of the properly specified types.
 
+        GeneralError :
+            Raised when method encounters a processing error, that is not otherwise caught.
+
         Returns :
         ------------
         None :
@@ -521,7 +541,7 @@ class Lucidic(object):
                         if isinstance(item, dict):
                             self._replace_null_dict_values(item, key_replace, value_replace)
                 # If the value of the current key is None, Null, Nil, or an empty string, redefine it to the specified replace_str value
-                elif v is None or v.lower() == 'null' or v.lower() == "nil" or v == "":
+                elif (v is None or v.lower() == 'null' or v.lower() == "nil" or v == "") and key_replace is None and value_replace is None:
                     Logger.debug("Attribute: {} flagged for value replacement. Resetting current value: {}, to: {}".format(k, v, replace_str))
                     dictobj.update({ k : replace_str })
                 
@@ -557,6 +577,9 @@ class Lucidic(object):
         ------------
         TypeError : 
             Raised if passed variables are not of the properly specified types.
+
+        GeneralError :
+            Raised when method encounters a processing error, that is not otherwise caught.
 
         Returns :
         ------------
@@ -630,7 +653,7 @@ class Lucidic(object):
 
 
     def replaceNull(self, keyword=None):
-        """Public dictionary method that will recursively scan the class instance dictionary object (self.dict) and clean out any None, Null or empty string ("") values that are encountered, by setting those discovered values to a default value such as 'Undefined'. This is especially helpful when dealing with AWS DynamoDB, a NoSQL DB that doesn't allow the input of NoneType, Null, Nill, or empty sting valued keys to be stored within it's table structure. When this method is called, the origin dictionary is copied, and all replacement actions are taken on the copy. The scrub action will be performed on the Instance Class dictionary that was set at the time of this class instance instantiation.
+        """Public dictionary method that will recursively scan the class instance dictionary object (self.dict) and clean out any None, Null or empty string ("") values that are encountered, by setting those discovered values to a default value such as 'Undefined'. This is especially helpful when dealing with AWS DynamoDB, a NoSQL DB that doesn't allow the input of NoneType, Null, Nill, or empty sting valued keys to be stored within it's table structure. When this object instance was instantiated, the origin dictionary was copied, and all replacement actions are taken on this instance copy (self.dict). The scrub action will be performed on the Instance Class dictionary that was set at the time of this class instance instantiation.
 
         Parameters :
         ------------
@@ -643,16 +666,23 @@ class Lucidic(object):
         TypeError : 
             Raised if passed variables are not of the properly specified types.
 
+        GeneralError :
+            Raised when method encounters a processing error, that is not otherwise caught.
+
         Returns :
         ------------
         {dict}
             Description : The return object will be a dictionary that is identical to the class instance source dict, with any encountered key values set to None, Null, Nil or an empty string value set to the replacement key word.
 
+        Syntax :
+        ------------
+            >>> LucidicTest.replaceNull("NullReplacementString")
+
         Example :
         ------------
             >>> LucidicTest = Lucidic(TESTDICT)
-            >>> LucidicTest.replaceNull("Undefined")
-            >>> DynamoDBRecord = LucidicTest.replaceNull("Undefined")
+            >>> LucidicTest.replaceNull() # Defaults to 'Undefined'
+            >>> DynamoDBRecord = LucidicTest.replaceNull("NullReplacementString")
 
         Example Result :
         ------------
@@ -717,7 +747,172 @@ class Lucidic(object):
             # Call the replace_null_dict_values method and return the sanitized dict object back to the method caller.
             self._replace_null_dict_values(self.dict)
         except Exception as e:
-            Logger.error("Error occurred in method: {}, attempting to reset empty string values in the specified dict object: {}".format(ThisMethod, str(e)))
+            Logger.error("Error occurred in method: {}, attempting to reset empty string values in self.dict object: {}".format(ThisMethod, str(e)))
             raise e
+
+        return self.dict
+
+
+    def replaceKey(self, key_search, replace_value):
+        """Public dictionary method that will recursively scan the class instance dictionary object (self.dict) and replace any found occurrences where the dict key matches the provided dict key given keyword. When this object instance was instantiated, the origin dictionary was copied, and all replacement actions are taken on this instance copy (self.dict). The scrub action will be performed on the Instance Class dictionary that was set at the time of this class instance instantiation.
+
+        Parameters :
+        ------------
+        key_search : {str: Required}
+            Description : Recursively scan the dict for this key name, and when found, rename the key to the provided value set in the 'replace_value' argument.
         
+        replace_value : {str: Required}
+            Description : The string value that will be used as the replacement for any keys that match the provided key_search. In essence any matched dict key itself will be renamed to this value.
+
+        Raises :
+        ------------
+        TypeError : 
+            Raised if passed variables are not of the properly specified types.
+
+        GeneralError :
+            Raised when method encounters a processing error, that is not otherwise caught.
+
+        Returns :
+        ------------
+        {dict}
+            Description : The return object will be a dictionary that is identical to the class instance source dict, with any encountered search_key matched key names renamed to the provided replace_value.
+
+        Syntax :
+        ------------
+            >>> LucidicTest.replaceKey(key_search, replace_value)
+        
+        Example :
+        ------------
+            >>> LucidicTest = Lucidic(TESTDICT)
+            >>> LucidicTest.replaceKey("ThirdListTierKey3", "ChangedKey1")
+            >>> DynamoDBRecord = LucidicTest.replaceKey("ThirdListTierKey3", "ChangedKey1")
+
+        Example Result :
+        ------------
+            >>> {
+                    "FirstTierKey1": {
+                        "SecondTierKey1": "null",
+                        "SecondTierKey2": [
+                            { "ThirdListTierKey1": "nil" },
+                            { "ThirdListTierKey2": "" },
+                            { "ThirdListTierKey3": "FourthListTierValue3" }
+                        ]
+                    }
+                }
+            
+            >>> {
+                    "FirstTierKey1": {
+                        "SecondTierKey1": "null",
+                        "SecondTierKey2": [
+                            { "ThirdListTierKey1": "nil" },
+                            { "ThirdListTierKey2": "" },
+                            { "ChangedKey1": "FourthListTierValue3" }
+                        ]
+                    }
+                }
+        """
+        # Validate the input types are correct
+        ThisMethod = inspect.stack()[0][3]
+        Logger.debug("Executing Class Method: {}".format(ThisMethod))
+        Logger.debug("Validating Lucidic.{} parameters...".format(ThisMethod))
+        assert isinstance(key_search, str), "{}({}) attribute expected type: {}, however the current value: {} is of type: {}".format(ThisMethod, "key_search", "str", key_search, type(key_search))
+        assert isinstance(replace_value, str), "{}({}) attribute expected type: {}, however the current value: {} is of type: {}".format(ThisMethod, "replace_value", "str", replace_value, type(replace_value))
+        
+        try:
+            '''Method Setup...'''
+            # Call the internal clear search results method to clear any previous search items in the result list.
+            Logger.debug("Clearing any previously instance cached search results and setting method runtime...")
+            
+            # Clear previous values from instance vars
+            self._reset_instance()
+            self._set_keyword(replace_value)
+            keyword = self._get_keyword()
+
+            # Call the replace_null_dict_values method and return the key replaced dict object back to the method caller.
+            self._replace_null_dict_values(self.dict, key_replace=key_search)
+        except Exception as e:
+            Logger.error("Error occurred in method: {}, attempting to rename key: {} to value: {} in self.dict object: {}".format(ThisMethod, key_search, replace_value, str(e)))
+            raise e
+
+        return self.dict
+
+
+    def replaceValue(self, val_search, replace_value):
+        """Public dictionary method that will recursively scan the class instance dictionary object (self.dict) and replace any found occurrences where a dict key value matches the provided val_search argument value. When this object instance was instantiated, the origin dictionary was copied, and all replacement actions are taken on this instance copy (self.dict). The scrub action will be performed on the Instance Class dictionary that was set at the time of this class instance instantiation.
+
+        Parameters :
+        ------------
+        val_search : {str: Required}
+            Description : Recursively scan the dict and attempt to match any keys value to the val_search specified in this argument, if found, update the value of the key to the value specified in the 'replace_value' argument.
+        
+        replace_value : {str: Required}
+            Description : The value that will be used as the replacement for any key's value that was matched to the val_search argument value. In essence any matched dict key values will be modified to the value set in this 'replace_value' argument.
+
+        Raises :
+        ------------
+        GeneralError :
+            Raised when method encounters a processing error, that is not otherwise caught.
+
+        Returns :
+        ------------
+        {dict}
+            Description : The return object will be a dictionary that is identical to the class instance source dict, with any encountered key values matching the val_search argument, modified to the provided replace_value value.
+
+        Syntax :
+        ------------
+            >>> LucidicTest.replaceValue(val_search, replace_value)
+        
+        Example :
+        ------------
+            >>> LucidicTest = Lucidic(TESTDICT)
+            >>> LucidicTest.replaceValue("ThirdListTierKey3", "ChangedKey1")
+            >>> DynamoDBRecord = LucidicTest.replaceValue("FourthListTierValue3", "ChangedValue1")
+
+        Example Result :
+        ------------
+            >>> {
+                    "FirstTierKey1": {
+                        "SecondTierKey1": "null",
+                        "SecondTierKey2": [
+                            { "ThirdListTierKey1": "nil" },
+                            { "ThirdListTierKey2": "" },
+                            { "ChangedKey1": "FourthListTierValue3" }
+                        ]
+                    }
+                }
+            
+            >>> {
+                    "FirstTierKey1": {
+                        "SecondTierKey1": "null",
+                        "SecondTierKey2": [
+                            { "ThirdListTierKey1": "nil" },
+                            { "ThirdListTierKey2": "" },
+                            { "ChangedKey1": "ChangedValue1" }
+                        ]
+                    }
+                }
+        """
+        # Validate the input types are correct
+        ThisMethod = inspect.stack()[0][3]
+        Logger.debug("Executing Class Method: {}".format(ThisMethod))
+        Logger.debug("Validating Lucidic.{} parameters...".format(ThisMethod))
+        
+        # We are not going to provide assert catch's for key values as values could literally be anything such as sting, int, list, dict, tuple, set, etc.. 
+        
+        try:
+            '''Method Setup...'''
+            # Call the internal clear search results method to clear any previous search items in the result list.
+            Logger.debug("Clearing any previously instance cached search results and setting method runtime...")
+            
+            # Clear previous values from instance vars
+            self._reset_instance()
+            self._set_keyword(replace_value)
+            keyword = self._get_keyword()
+
+            # Call the replace_null_dict_values method and return the sanitized dict object back to the method caller.
+            self._replace_null_dict_values(self.dict, value_replace=val_search)
+        except Exception as e:
+            Logger.error("Error occurred in method: {}, attempting to modify the value of {}:{} to {}:{} in self.dict object: {}".format(ThisMethod, k, v, k, replace_value, str(e)))
+            raise e
+
         return self.dict

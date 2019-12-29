@@ -12,9 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Getters and Setters for self._results, self._keyword, and self._strict by [@rnason](https://github.com/rnason).
+- Internal reset instance method to clear previously set values for self._results, self._strict, and self._keyword by [@rnason](https://github.com/rnason)
 - Unit tests for Getters and Setters by [@rnason](https://github.com/rnason).
 - Added Replace None, Null, Nil, empty string method by [@rnason](https://github.com/rnason).
 - Added Method logic to find and replace a key or it's cooresponding value by [@rnason](https://github.com/rnason).
+- Unit test for find and replace key and value methods by [@rnason](https://github.com/rnason).
 
 ### Changed
 
