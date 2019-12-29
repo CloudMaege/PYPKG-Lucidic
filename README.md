@@ -67,7 +67,7 @@ print(TestDict.dict)
 
 ## Methods
 
-### `.search(keyword, strict)`
+### search(keyword, strict)
 
 The search method allows the ability to recursively search for a keyword throughout the entire dictionary object. The method takes 2 arguments, one of which is required, the other optional.
 
@@ -155,7 +155,7 @@ The keypath returns were constructed in a list object as a way to allow future m
 
 <br><br>
 
-### `.replaceNull(keyword)`
+### replaceNull(keyword)
 
 The replaceNull method will recursively go through the instantiated objects dictionary and replace any values within the dictionary that are set to None, Null, Nil, or contain an empty string value (""). This function is especially useful when dealing with NoSQL databases such as AWS DynamoDB, in which Dynamo does not allow those values to be added to a table. The keword becomes the value of any occurrence of a None, Null, Nil, or empty string value currently set for keys within the dictionary. Keyword is optional, if left blank, then by default it will be set to `Undefined`.
 
@@ -224,7 +224,7 @@ print(TestDict.dict)
 
 <br><br>
 
-### `.replaceKey(key_search, replace_value)`
+### replaceKey(key_search, replace_value)
 
 The replaceKey method will recursively go through the instantiated objects dictionary and if any of the dictionaries keys match the given `key_search` value, then the key will be renamed to the value set in `replace_value`.
 
@@ -298,7 +298,7 @@ print(TestDict.dict)
 
 <br><br>
 
-### `.replaceValue(val_search, replace_value)`
+### replaceValue(val_search, replace_value)
 
 The replaceValue method will recursively go through the instantiated objects dictionary and if any key or property values match the given `val_search` value, then the key or property's value will be modified to the value set in `replace_value`.
 
