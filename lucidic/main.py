@@ -138,6 +138,13 @@ class Lucidic(object):
         self._strict = bool(False)
 
 
+    def _reset_instance(self):
+        '''Internal method to remove any previously assigned results, keywords, or strict settings'''
+        self._clear_results()
+        self._clear_keyword()
+        self._unset_strict()
+
+
     ############################
     # Internal Search Methods: #
     ############################
@@ -336,9 +343,13 @@ class Lucidic(object):
         None :
             Description : This method doesn't directly return a value, when a positive match is found, the match is added to the search results list by calling the internal class method self._set_search_result.
 
+        Syntax :
+        ------------
+            >>> self._search_recursive_dict({k:v}, [keypath])
+        
         Example :
         ------------
-            >>> self._search_recursive_dict(dict, ["keypath"])
+            >>> self._search_recursive_dict({"Key": "Value"}, ['Records'])
 
         Example Result :
         ------------
@@ -360,14 +371,13 @@ class Lucidic(object):
                 elif isinstance(v, list):
                     self._search_recursive_list(k, v, keypath)
                 else:
-                    # print("k:{}, v:{}, keyword:{}, keypath:{}, strict:{}".format(k, v, self._keyword, keypath, self._strict))
                     self._search_item_match(k, v, keypath)
         except Exception as e:
             Logger.error("Error occurred in method: {}, attempting to recursively iterate through: {} in keypath: {} : {}".format(ThisMethod, dictobj, keypath, str(e)))
             raise e
 
 
-    def _search_recursive_list(self, k, sublist, keypath):
+    def _search_recursive_list(self, k, listobj, keypath):
         """Sudo private internal class method used recursively search through the specified list. The method will evaluate each item in the list, if the value of an item is a nested list, the method will recursively call itself, adding the current iterations parent dict key to the keypath list, along with the list item index. and pass the keypath list with the list item to another instance of itself. If the value is a dict, then the method will call the self._search_recursive_dict method that will perform the same function as this method on a nested dict object. This will allow the method to iterate through the list values until a comparable non dict, non list value is found, at which point the method will call the self._search_item_match method to attempt to match the value to the given search keyword.
 
         Parameters :
@@ -375,7 +385,7 @@ class Lucidic(object):
         k : {str: Required}
             Description : The key of the parent dict of which the value was this or a parent list object.
         
-        sublist : {list: Required}
+        listobj : {list: Required}
             Description : The list that the method will use to recursively check each item for a keyword occurrance. In the event that the value of the item is another list object, then the key of the parent list, as well as this current item will be added to the keypath list, and the value of the current item will be set to sublist, and passed back to this method recursively.
 
         keypath : {list: Required}
@@ -391,9 +401,13 @@ class Lucidic(object):
         None :
             Description : This method doesn't directly return a value, when a positive match is found, the match is added to the search results list by calling the internal class method self._set_search_result.
 
+        Syntax :
+        ------------
+            >>> self._search_item_match(dictkey, listobj, [keypath])
+        
         Example :
         ------------
-            >>> self._search_item_match(k, sublist, ["keypath"])
+            >>> self._search_item_match("Records", [{"Key": "Value}], ['Business'])
 
         Example Result :
         ------------
@@ -404,26 +418,26 @@ class Lucidic(object):
         Logger.debug("Executing Class Method: {}".format(ThisMethod))
         Logger.debug("Validating Lucidic.{} parameters...".format(ThisMethod))
         assert isinstance(k, str), "{}({}) attribute expected type: {}, however the current value: {} is of type: {}".format(ThisMethod, "k", "str", k, type(k))
-        assert isinstance(sublist, list), "{}({}) attribute expected type: {}, however the current value: {} is of type: {}".format(ThisMethod, "sublist", "list", sublist, type(sublist))
+        assert isinstance(listobj, list), "{}({}) attribute expected type: {}, however the current value: {} is of type: {}".format(ThisMethod, "listobj", "list", listobj, type(listobj))
         assert isinstance(keypath, list), "{}({}) attribute expected type: {}, however the current value: {} is of type: {}".format(ThisMethod, "keypath", "list", keypath, type(keypath))
         
         try:
-            for item in sublist:
+            for item in listobj:
                 if isinstance(item, dict):
-                    list_keypath = self._construct_list_keypath(keypath, k, sublist.index(item))
+                    list_keypath = self._construct_list_keypath(keypath, k, listobj.index(item))
                     self._search_recursive_dict(item, list_keypath)
                 elif isinstance(item, list):
-                    list_keypath = self._construct_list_keypath(keypath, k, sublist.index(item))
+                    list_keypath = self._construct_list_keypath(keypath, k, listobj.index(item))
                     prevkey = str(list_keypath[-1:]).replace("['", "").replace("']", "")
                     self._search_recursive_list(prevkey, item, list_keypath)
                 else:
-                    self._search_item_match("{}[{}]".format(k, sublist.index(item)), item, keypath)
+                    self._search_item_match("{}[{}]".format(k, listobj.index(item)), item, keypath)
         except Exception as e:
-            Logger.error("Error occurred in method: {}, attempting to recursively iterate through: {}:{} in keypath: {} : {}".format(ThisMethod, k, sublist, keypath, str(e)))
+            Logger.error("Error occurred in method: {}, attempting to recursively iterate through: {}:{} in keypath: {} : {}".format(ThisMethod, k, listobj, keypath, str(e)))
             raise e
 
 
-    def _replace_null_dict_values(self, dictobj, replace_str):
+    def _replace_null_dict_values(self, dictobj, key_replace=None, value_replace=None):
         """Sudo private internal class method that will recursively scan a specified dictionary object and clean out any None, Null or empty string ("") values that are encountered, by setting those discovered values to a default value such as 'Undefined'. This is especially helpful when dealing with AWS DynamoDB, a NoSQL DB that doesn't allow the input of NoneType, Null, Nill, or empty sting valued keys to be stored within it's table structure. When this method is called, the origin dictionary is copied, and all replacement actions are taken on the copy. The original dict structure is not modified in any way.
 
         Parameters :
@@ -431,8 +445,16 @@ class Lucidic(object):
         dictobj : {str: Required}
             Description : The Python dictionary object that will be recursively searched for None, Null, Nil, or empty string values. If the value of any dict key is another dict object, this method will recursively call itself passing in the new object to the recursive method call.
 
-        replace_str : {str: Required}
+        keyword : {str: Required}
             Description : The string value that will be set for any keys that currently have values set to None, Null, Nil, or an empty string ("").
+
+        key_replace : {str: Optional}
+            Description : String value containing the name of a dict key to look for and replace with the specified keyword. This variable is only used for replaceKey public method.
+            Default     : None
+
+        value_replace : {str: Optional}
+            Description : String value containing the name of a dict key=>value to look for and replace with the specified keyword. This variable is only used for replaceValue public method.
+            Default     : None
 
         Raises :
         ------------
@@ -441,54 +463,71 @@ class Lucidic(object):
 
         Returns :
         ------------
-        None
+        None :
             Description : This method doesn't return a value, it does however update the passed dict keys, whose values are None, Null, Nil, or empty strings with the defined replacement string set in the public caller replaceNull method.
 
+        Syntax :
+        ------------
+            >>> self._replace_null_dict_values(dictobj, key_replace="SomeKey", value_replace="SomeValue")
+        
         Example :
         ------------
-            >>> self._replace_null_dict_values(dictobj)
+            >>> self._replace_null_dict_values(self.dict)
+            >>> self._replace_null_dict_values(self.dict, key_replace="SomeKey")
+            >>> self._replace_null_dict_values(self.dict, value_replace="SomeValue")
 
         Example Result :
         ------------
-            {'key': ''}
-            {'key': 'Undefined'}
+        None : The passed dict object will be modified via the dict.update() method. An example of change is as follows:
+            >>> {'key': ''}
+            >>> {'key': 'Undefined'}
         """
         # Validate the input types are correct
         ThisMethod = inspect.stack()[0][3]
         Logger.debug("Executing Class Method: {}".format(ThisMethod))
         Logger.debug("Validating Lucidic.{} parameters...".format(ThisMethod))
         assert isinstance(dictobj, dict), "{}({}) attribute expected type: {}, however the current value: {} is of type: {}".format(ThisMethod, "dictobj", "dict", dictobj, type(dictobj))
+        
+        # Check if key_replace or value_replace was passed. These values would only be passed for the calls to the replaceKey or replaceVal public methods. If not then set to None.
+        if key_replace is not None:
+            assert isinstance(key_replace, str), "{}({}) attribute expected type: {}, however the current value: {} is of type: {}".format(ThisMethod, "key_replace", "str", key_replace, type(key_replace))
+            key_replace = str(key_replace)
+        else:
+            key_replace == None
+        if value_replace is not None:
+            assert isinstance(value_replace, str), "{}({}) attribute expected type: {}, however the current value: {} is of type: {}".format(ThisMethod, "value_replace", "str", value_replace, type(value_replace))
+            value_replace = str(value_replace)
+        else:
+            value_replace = None
 
-        # Pull the replaceNull values into this methods scope for iteration consistency.
-        replace_str = replace_str
-        replace_key = self._replace_key_instance
-        replace_val = self._replace_value_instance
+        # Pull the replace_str value into this method to assign the replacement keyword.
+        replace_str = self._get_keyword()
 
         try:
             # If the key replacement variable is set, then look at the dict keys, and if a key match's then replace it.
-            if replace_key is not None and replace_key in dictobj.keys():
-                dictobj.update({ replace_str : dictobj.get(replace_key) })
-                dictobj.pop(replace_key)
+            if key_replace is not None and key_replace in dictobj.keys():
+                dictobj.update({ replace_str : dictobj.get(key_replace) })
+                dictobj.pop(key_replace)
 
             # Recursively scan through the specified dictionary object and test each value, replacing None, Null, Nil, or empty strings with the replace_str set in the public caller method.
             for k, v in dictobj.items():
                 # If the value of the key is a dictionary, then recursively call this method
                 if isinstance(v, dict):
                     Logger.debug("Dictionary object detected, recursively calling {} on {}.".format(ThisMethod, v))
-                    self._replace_null_dict_values(v, replace_str)
+                    self._replace_null_dict_values(v, key_replace, value_replace)
                 # If the value of the key is a list, then look at each list item, and if the item is a nested dict, then recursively call this method.
                 elif isinstance(v, list):
                     for item in v:
                         if isinstance(item, dict):
-                            self._replace_null_dict_values(item, replace_str)
+                            self._replace_null_dict_values(item, key_replace, value_replace)
                 # If the value of the current key is None, Null, Nil, or an empty string, redefine it to the specified replace_str value
                 elif v is None or v.lower() == 'null' or v.lower() == "nil" or v == "":
                     Logger.debug("Attribute: {} flagged for value replacement. Resetting current value: {}, to: {}".format(k, v, replace_str))
                     dictobj.update({ k : replace_str })
                 
                 # If a scrub_val was set, then look for instances of the scrub value and replace it with the replacement value.
-                elif replace_val is not None and v == replace_val:
-                    Logger.debug("Current value flagged for update. Changeing {}:{} => {}:{}".format(k, v, k, replace_val))
+                elif value_replace is not None and v == value_replace:
+                    Logger.debug("Current value flagged for update. Changeing {}:{} => {}:{}".format(k, v, k, value_replace))
                     dictobj.update({ k : replace_str })
             Logger.debug("All attributes with previous values of None, Null, Nil, or empty strings have been reset to: {}".format(replace_str))
         except Exception as e:
@@ -524,26 +563,31 @@ class Lucidic(object):
         {list}
             Description : The return list of dicts will contain keypath, and match results for each match that was found for the keyword against the dict.
 
+        Syntax :
+        ------------
+            >>> SearchResults = LucidicTest.search("Name")
+        
         Example :
         ------------
             >>> LucidicTest = Lucidic(TESTDICT)
-            >>> LucidicTest.self._replace_null_dict_values(validDict.dict)
-            
-            >>> LucidicTest2 = Lucidic(TESTDICT, strict=True)
-            >>> SearchResults2 = LucidicTest2.search("Name")
+            >>> SearchResults = LucidicTest.search("Name")
+
+            >>> LucidicTest2 = Lucidic(TESTDICT)
+            >>> SearchResults2 = LucidicTest2.search("Name", strict=True)
 
         Example Result :
         ------------
-            [
-                {'keypath': ['Customers'], 'match': {'Name': 'John Doe'}},
-                {'keypath': ['Customers', 'Address'], 'match': {'AliasName': 'Home'}},
-                {'keypath': ['Business[0]'], 'match': {'Name': 'SomeBusiness'}}
-            ]
+        Result {list} :
+            >>> [
+                    {'keypath': ['Customers'], 'match': {'Name': 'John Doe'}},
+                    {'keypath': ['Customers', 'Address'], 'match': {'AliasName': 'Home'}},
+                    {'keypath': ['Business[0]'], 'match': {'Name': 'SomeBusiness'}}
+                ]
             
-            [
-                {'keypath': ['Customers'], 'match': {'Name': 'John Doe'}},
-                {'keypath': ['Business[0]'], 'match': {'Name': 'SomeBusiness'}}
-            ]
+            >>> [
+                    {'keypath': ['Customers'], 'match': {'Name': 'John Doe'}},
+                    {'keypath': ['Business[0]'], 'match': {'Name': 'SomeBusiness'}}
+                ]
         """
         # Validate the input types are correct
         ThisMethod = inspect.stack()[0][3]
@@ -553,46 +597,46 @@ class Lucidic(object):
         assert isinstance(strict, bool), "{}({}) attribute expected type: {}, however the current value: {} is of type: {}".format(ThisMethod, "strict", "bool", strict, type(strict))
         
         try:
+            '''Method Setup...'''
             # Call the internal clear search results method to clear any previous search items in the result list.
-            Logger.debug("Clearing previous search results...")
-            self._search_results = []
-            self._keypath = []
-            self._keyword = str(keyword)
-            self._strict = strict
+            Logger.debug("Clearing any previously instance cached search results and setting method runtime...")
+            
+            # Clear previous values from instance vars
+            self._reset_instance()
+
+            # Set strict based on if strict was requested by method caller.
+            if strict:
+                self._set_strict()
+            else:
+                self._unset_strict()
+
+            # Set Keyword and keypath
+            self._set_keyword(keyword)
+            keyword = self._get_keyword()
+            keypath = []
 
             # Call the internal _search method to perform the actual search of the given keyword against this class targets dict.
             Logger.debug("Executing search on {} object for occurrences of the keyword: {}, strict flag is set to: {}".format(type(self.dict), keyword, strict))
             if isinstance(self.dict, dict):
-                self._search_recursive_dict(self.dict, self._keypath)
+                self._search_recursive_dict(self.dict, keypath)
             elif isinstance(self.dict, list):
-                self._search_recursive_list("", self.dict, self._keypath)
+                self._search_recursive_list("", self.dict, keypath)
         except Exception as e:
-            Logger.error("Error occurred in method: {}, attempting to search: {} for keyword: {} using strict: {}: {}".format(ThisMethod, self.dict, keyword, self._strict, str(e)))
+            Logger.error("Error occurred in method: {}, attempting to search: {} for keyword: {} using strict: {}: {}".format(ThisMethod, self.dict, keyword, strict, str(e)))
             raise e
 
-        # Return search results.
-        return self._search_results
+        # Return search results
+        return self._get_results()
 
 
-    def replaceNull(self, dictobj=None, replace_str=None, scrub_key=None, scrub_val=None):
-        """Public dictionary method that will recursively scan a specified dictionary object and clean out any None, Null or empty string ("") values that are encountered, by setting those discovered values to a default value such as 'Undefined'. This is especially helpful when dealing with AWS DynamoDB, a NoSQL DB that doesn't allow the input of NoneType, Null, Nill, or empty sting valued keys to be stored within it's table structure. When this method is called, the origin dictionary is copied, and all replacement actions are taken on the copy. The original dict structure is not modified in any way.
+    def replaceNull(self, keyword=None):
+        """Public dictionary method that will recursively scan the class instance dictionary object (self.dict) and clean out any None, Null or empty string ("") values that are encountered, by setting those discovered values to a default value such as 'Undefined'. This is especially helpful when dealing with AWS DynamoDB, a NoSQL DB that doesn't allow the input of NoneType, Null, Nill, or empty sting valued keys to be stored within it's table structure. When this method is called, the origin dictionary is copied, and all replacement actions are taken on the copy. The scrub action will be performed on the Instance Class dictionary that was set at the time of this class instance instantiation.
 
         Parameters :
         ------------
-        dictobj : {str: Required}
-            Description : The Python dictionary object that will be recursively searched for None, Null, Nil, or empty string values. If the value of any dict key is another dict object, this method will recursively call itself passing in the new object to the recursive method call.
-
-        replace_str : {str: Optional}
-            Description : The string value that will be set for any keys that currently have values set to None, Null, Nil, or an empty string ("").
+        keyword : {str: Optional}
+            Description : The string value that will be used as the replacement for any keys that currently have values set to None, Null, Nil, or an empty string ("").
             Default     : "Undefined"
-
-        scrub_key : {str: Optional}
-            Description : An optional value that can be supplied to flag that any occurrences of the given dict key when found, will also be replaced with the replace_str value even though the key is not None, Null, Nil, or an empty string.
-            Default     : None
-
-        scrub_val : {str: Optional}
-             Description : An optional value that can be supplied to flag that any occurrences of the given dict value when found, will also be replaced with the replace_str value even though the value is not None, Null, Nil, or an empty string.
-            Default     : None
 
         Raises :
         ------------
@@ -602,51 +646,78 @@ class Lucidic(object):
         Returns :
         ------------
         {dict}
-            Description : The return object will be a dictionary that is identical to the class instance source dict, with the exception that None, Null, Nill and empty string values will have the passed default value set.
+            Description : The return object will be a dictionary that is identical to the class instance source dict, with any encountered key values set to None, Null, Nil or an empty string value set to the replacement key word.
 
         Example :
         ------------
             >>> LucidicTest = Lucidic(TESTDICT)
+            >>> LucidicTest.replaceNull("Undefined")
             >>> DynamoDBRecord = LucidicTest.replaceNull("Undefined")
 
         Example Result :
         ------------
-            [
-                {'keypath': ['Customers'], 'match': {'Name': 'John Doe'}},
-                {'keypath': ['Customers', 'Address'], 'match': {'AliasName': 'Home'}},
-                {'keypath': ['Business[0]'], 'match': {'Name': 'SomeBusiness'}}
-            ]
+            >>> {
+                    "FirstTierKey1": "FirstTierValue",
+                    "FirstTierKey2": "Null",
+                    "FirstTierKey3": {
+                        "SecondTierKey1": "SomeValue",
+                        "SecondTierKey2": "Nil",
+                        "SecondTierKey3": "",
+                        "SecondTierKey4": {
+                            "ThirdTierKey1": "null",
+                            "ThirdTierKey2": [
+                                { "FourthListTierKey1": "nil" },
+                                { "FourthListTierKey2": "" },
+                                { "FourthListTierKey3": "FourthListTierValue3" }
+                            ]
+                        }
+                    }
+                }
             
-            [
-                {'keypath': ['Customers'], 'match': {'Name': 'John Doe'}},
-                {'keypath': ['Business[0]'], 'match': {'Name': 'SomeBusiness'}}
-            ]
+            >>> {
+                    "FirstTierKey1": "FirstTierValue",
+                    "FirstTierKey2": "Undefined",
+                    "FirstTierKey3": {
+                        "SecondTierKey1": "SomeValue",
+                        "SecondTierKey2": "Undefined",
+                        "SecondTierKey3": Undefined,
+                        "SecondTierKey4": {
+                            "ThirdTierKey1": "Undefined",
+                            "ThirdTierKey2": [
+                                { "FourthListTierKey1": "Undefined" },
+                                { "FourthListTierKey2": Undefined },
+                                { "FourthListTierKey3": "FourthListTierValue3" }
+                            ]
+                        }
+                    }
+                }
         """
         # Validate the input types are correct
         ThisMethod = inspect.stack()[0][3]
         Logger.debug("Executing Class Method: {}".format(ThisMethod))
         Logger.debug("Validating Lucidic.{} parameters...".format(ThisMethod))
-
-        if dictobj is not None:
-            assert isinstance(dictobj, dict), "{}({}) attribute expected type: {}, however the current value: {} is of type: {}".format(ThisMethod, "dictobj", "dict", dictobj, type(dictobj))
-        if replace_str is not None:
-            assert isinstance(replace_str, str), "{}({}) attribute expected type: {}, however the current value: {} is of type: {}".format(ThisMethod, "replace_str", "str", replace_str, type(replace_str))
-        if scrub_key is not None:
-            assert isinstance(scrub_key, str), "{}({}) attribute expected type: {}, however the current value: {} is of type: {}".format(ThisMethod, "scrub_key", "str", scrub_key, type(scrub_key))
-        if scrub_val is not None:
-            assert isinstance(scrub_val, str), "{}({}) attribute expected type: {}, however the current value: {} is of type: {}".format(ThisMethod, "scrub_val", "str", scrub_val, type(scrub_val))
-        
-        # Assign Method Variables
-        self._replace_null_dictobj = dictobj.copy() if dictobj is not None else self.dict.copy()
-        self._replace_null_str = replace_str if replace_str is not None else "Undefined"
-        self._replace_key_instance = scrub_key
-        self._replace_value_instance = scrub_val
         
         try:
-            # Call the replace_null_dict_values function on the dict copy and return the sanitized dict object back to the method caller.
-            self._replace_null_dict_values(self._replace_null_dictobj, self._replace_null_str)
+            '''Method Setup...'''
+            # Call the internal clear search results method to clear any previous search items in the result list.
+            Logger.debug("Clearing any previously instance cached search results and setting method runtime...")
+            
+            # Clear previous values from instance vars
+            self._reset_instance()
+
+            # Set keyword based on if specified by method caller.
+            if keyword is not None:
+                assert isinstance(keyword, str), "{}({}) attribute expected type: {}, however the current value: {} is of type: {}".format(ThisMethod, "keyword", "str", keyword, type(keyword))
+                self._set_keyword(keyword)
+            else:
+                self._set_keyword("Undefined")
+
+            keyword = self._get_keyword()
+
+            # Call the replace_null_dict_values method and return the sanitized dict object back to the method caller.
+            self._replace_null_dict_values(self.dict)
         except Exception as e:
             Logger.error("Error occurred in method: {}, attempting to reset empty string values in the specified dict object: {}".format(ThisMethod, str(e)))
             raise e
         
-        return self._replace_null_dictobj
+        return self.dict
